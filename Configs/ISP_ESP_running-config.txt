@@ -1,0 +1,106 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Router
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+!
+!
+!
+license udi pid CISCO2811/K9 sn FTX1017GMA6-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface Serial0/2/0
+ ip address 193.0.10.21 255.255.255.252
+ ipv6 address 2001:1200:D29::2/48
+ ipv6 rip 1 enable 
+ clock rate 2000000
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+!
+interface Serial0/3/0
+ ip address 193.0.9.18 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/3/1
+ ip address 193.0.9.6 255.255.255.252
+!
+interface Vlan1
+ no ip address
+!
+router eigrp 10
+ network 193.0.9.4 0.0.0.3
+!
+router ospf 10
+ log-adjacency-changes
+ network 193.0.9.16 0.0.0.3 area 0
+!
+ipv6 router ospf 10
+ router-id 0.0.0.2
+ log-adjacency-changes
+!
+ipv6 router rip 1
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+

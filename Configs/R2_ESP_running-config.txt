@@ -1,0 +1,151 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Router
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+ipv6 dhcp pool GUEST_VLAN40
+ address prefix 2001:1200:B29:40::/64 lifetime 172800 86400
+ dns-server 2001:1200:C19::1
+!
+ipv6 dhcp pool INTERNAL_VLAN50
+ address prefix 2001:1200:B29:50::/64 lifetime 172800 86400
+ dns-server 2001:1200:C19::1
+!
+ipv6 dhcp pool PRINTER_VLAN60
+ address prefix 2001:1200:B29:60::/64 lifetime 172800 86400
+ dns-server 2001:1200:C19::1
+!
+!
+!
+!
+license udi pid CISCO2811/K9 sn FTX1017VKOM-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Tunnel0
+ ip address 10.0.0.2 255.255.255.252
+ mtu 1476
+ tunnel source Serial0/3/0
+ tunnel destination 193.0.9.22
+!
+!
+interface FastEthernet0/0
+ no ip address
+ ipv6 traffic-filter TRABAJADORES_VLAN50_MAD in
+ duplex auto
+ speed auto
+ ipv6 enable
+ ipv6 ospf 10 area 0
+!
+interface FastEthernet0/0.40
+ encapsulation dot1Q 40
+ no ip address
+ ipv6 address 2001:1200:B29:40::1/64
+ ipv6 dhcp server GUEST_VLAN40
+!
+interface FastEthernet0/0.50
+ encapsulation dot1Q 50
+ no ip address
+ ipv6 address 2001:1200:B29:50::1/64
+ ipv6 dhcp server INTERNAL_VLAN50
+!
+interface FastEthernet0/0.60
+ encapsulation dot1Q 60
+ no ip address
+ ipv6 address 2001:1200:B29:60::1/64
+ ipv6 dhcp server PRINTER_VLAN60
+!
+interface FastEthernet0/0.99
+ encapsulation dot1Q 99 native
+ no ip address
+ ipv6 address 2001:1200:B29:99::1/64
+!
+interface FastEthernet0/1
+ no ip address
+ ipv6 traffic-filter BLOCK-SNMP in
+ duplex auto
+ speed auto
+!
+interface Serial0/3/0
+ ip address 193.0.10.22 255.255.255.252
+ ipv6 address 2001:1200:D29::1/48
+ ipv6 ospf 10 area 0
+!
+interface Serial0/3/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ipv6 router ospf 10
+ router-id 0.0.0.1
+ log-adjacency-changes
+!
+ip classless
+ip route 192.168.2.0 255.255.255.0 10.0.0.1 
+!
+ip flow-export version 9
+!
+ipv6 route 2001:1200:A19::/48 2001:1200:D29::2
+!
+ipv6 access-list INVITADOS_VLAN40_MAD
+ permit tcp 2001:1200:B29:40::/64 any eq www
+ deny tcp 2001:1200:B29:40::/64 any eq 443
+ipv6 access-list TRABAJADORES_VLAN50_MAD
+ permit tcp 2001:1200:B29:50::/64 any eq 443
+ deny tcp 2001:1200:B29:50::/64 any eq www
+ipv6 access-list BLOCK-SNMP
+ deny udp any any eq snmp
+ deny udp any any eq 162
+ permit ipv6 any any
+!
+!
+!
+!
+snmp-server community public RO
+snmp-server community private RW
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
